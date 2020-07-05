@@ -16,7 +16,7 @@ services:
     shm_size: 1G
     ports:
       - 9200:9200
-  eskib:
+  kibana:
     image: docker.elastic.co/kibana/kibana:7.8.0
     ports:
       - 5601:5601
@@ -33,7 +33,7 @@ services:
       - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
       - ./logstash/pipeline:/usr/share/logstash/pipeline
     ports:
-      - "514:514" # syslog
+      - "514:1514" # syslog
     #   - "5000:5000/tcp"
     #   - "5000:5000/udp"
     #   - "9600:9600"
