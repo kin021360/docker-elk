@@ -1,0 +1,54 @@
+version: '2.2'
+services:
+  essingle:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    environment:
+      - node.name=essingle
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    # volumes:
+    #   - data01:/usr/share/elasticsearch/data
+    shm_size: 1G
+    ports:
+      - 9200:9200
+  eskib:
+    image: docker.elastic.co/kibana/kibana:7.8.0
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://essingle:9200
+      ELASTICSEARCH_HOSTS: http://essingle:9200
+    depends_on:
+      -  essingle
+    links:
+      - essingle
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.8.0
+    volumes:
+      - type: bind
+        source: ./logstash/logstash.yml
+        target: /usr/share/logstash/config/logstash.yml
+        read_only: true
+      - type: bind
+        source: ./logstash/pipeline
+        target: /usr/share/logstash/pipeline
+        read_only: true
+    ports:
+      - "514:514" # syslog
+    #   - "5000:5000/tcp"
+    #   - "5000:5000/udp"
+    #   - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    depends_on:
+      -  essingle
+    links:
+      - essingle
+
+
+# Reference: https://github.com/deviantony/docker-elk
