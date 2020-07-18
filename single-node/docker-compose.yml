@@ -14,12 +14,12 @@ services:
     # volumes:
     #   - data01:/usr/share/elasticsearch/data
     shm_size: 1G
+    restart: always
+#    restart: on-failure
     ports:
       - 9200:9200
   kibana:
     image: docker.elastic.co/kibana/kibana:7.8.0
-    ports:
-      - 5601:5601
     environment:
       ELASTICSEARCH_URL: http://essingle:9200
       ELASTICSEARCH_HOSTS: http://essingle:9200
@@ -27,23 +27,29 @@ services:
       -  essingle
     links:
       - essingle
+    restart: always
+#    restart: on-failure
+    ports:
+      - 5601:5601
   logstash:
     image: docker.elastic.co/logstash/logstash:7.8.0
     volumes:
       - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
       - ./logstash/pipeline:/usr/share/logstash/pipeline
-    ports:
-      - "514:1514/tcp" # syslog
-      - "514:1514/udp" # syslog
-    #   - "5000:5000/tcp"
-    #   - "5000:5000/udp"
-    #   - "9600:9600"
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     depends_on:
       -  essingle
     links:
       - essingle
+    restart: always
+#    restart: on-failure
+    ports:
+      - "514:1514/tcp" # syslog
+      - "514:1514/udp" # syslog
+    #   - "5000:5000/tcp"
+    #   - "5000:5000/udp"
+    #   - "9600:9600"
 
 
 # Reference: https://github.com/deviantony/docker-elk
