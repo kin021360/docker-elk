@@ -6,7 +6,7 @@ services:
       - node.name=essingle
       - discovery.type=single-node
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -Dlog4j2.formatMsgNoLookups=true"
     ulimits:
       memlock:
         soft: -1
@@ -37,7 +37,7 @@ services:
       - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
       - ./logstash/pipeline:/usr/share/logstash/pipeline
     environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m -Dlog4j2.formatMsgNoLookups=true"
     depends_on:
       -  essingle
     links:
